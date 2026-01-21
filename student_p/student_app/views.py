@@ -4,6 +4,10 @@ from .forms import StudentForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django. contrib.auth.decorators import login_required, permission_required, user_passes_test
+
+
+
 
 
 
@@ -94,6 +98,21 @@ def add_lecturer(request):
         department_id = request.POST.get('department')
         image = request.FILES.get('image')
 
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
+
+        if password != password2:
+            return redirect('add_lecturer')
+        if User.objects.filter(username=username).exists():
+            
+            return redirect('login')
+
+        # Create the User first
+        user = User.objects.create_user(username=username, password=password, email=email)
+        
+
         department = Department.objects.get(id=department_id)
 
         Lecture.objects.create(
@@ -101,12 +120,19 @@ def add_lecturer(request):
             phone=phone,
             email=email,
             department=department,
-            image=image
+            image=image,
+            user= user
+
         )
 
         return redirect('success')  # or any page
 
     return render(request, 'add_lecturer.html', {'departments': departments})
+
+
+
+
+
 
 def view_lecturers(request):
     lecturers= Lecture.objects.all()
@@ -117,6 +143,51 @@ def logout_user(request):
     logout(request)
     return redirect('home')
 
-# Create your views here.
+
+
+
+
+def register_student(request):
+    if request.method == "POST":
+        
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        age = request.POST.get('age')
+        image = request.FILES.get('image')
+
+        # Get user credentials
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
+
+        # Validate passwords
+        if password != password2:
+            
+            return redirect('register_student')
+
+        # Check if username exists
+        if User.objects.filter(username=username).exists():
+            
+            return redirect('login')
+
+        # Create the User first
+        user = User.objects.create_user(username=username, password=password, email=email)
+        
+        # Create the Student and link to User
+        student = Student.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            age=age,
+            image=image,
+            user=user
+        )
+
+        messages.success(request, f"Student {first_name} registered successfully")
+        return redirect('success')
+
+    return render(request, 'register_student.html')
+
 
 

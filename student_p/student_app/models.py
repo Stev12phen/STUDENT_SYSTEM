@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Student(models.Model):
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE, null=True, blank=True)
     first_name= models.CharField(max_length=30)
     last_name= models.CharField(max_length=30)
     image= models.ImageField(upload_to='images/')
@@ -28,6 +29,7 @@ class Program(models.Model):
     
 
 class Lecture(models.Model):
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE, null=True, blank=True)
     name= models.CharField(max_length=100)
     phone= models.CharField(max_length=15)
     image= models.ImageField(upload_to='images/')
