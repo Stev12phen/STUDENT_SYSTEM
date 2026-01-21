@@ -1,0 +1,122 @@
+from django.shortcuts import render, redirect, HttpResponse
+from .models import Student, Department, Lecture
+from .forms import StudentForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib import messages
+
+
+
+
+
+
+
+def home(request):
+    return render(request, 'home.html')
+
+def success(request):
+    return render(request, 'success.html')
+
+
+def add_student(request):
+    if request.method == "POST":
+        first_name = request.POST.get('first_name')
+        last_name  = request.POST.get('last_name')
+        email      = request.POST.get('email')
+        age        = request.POST.get('age')
+        image      = request.FILES.get('image')  # for image
+
+        Student.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            age=age,
+            image=image
+        )
+
+        return redirect('success')  # or any page you want
+
+    return render(request, 'add_student.html')
+
+
+
+def register_user(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        email    = request.POST.get('email')
+        password = request.POST.get('password')
+        password2= request.POST.get('password2')
+
+        if password != password2:
+            messages.error(request, "Passwords do not match")
+            return redirect('register')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+            return redirect('register')
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        messages.success(request, "Account created successfully")
+        return redirect('login')
+
+    return render(request, 'register_user.html')
+
+
+
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username= username, password= password)
+        if user is not None:
+            login(request, user)
+            return redirect('success')
+        else:
+            return HttpResponse("Invalid credentials")
+    return render(request, 'Login.html')
+
+
+
+
+
+def add_lecturer(request):
+    departments = Department.objects.all()
+
+    if request.method == "POST":
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        department_id = request.POST.get('department')
+        image = request.FILES.get('image')
+
+        department = Department.objects.get(id=department_id)
+
+        Lecture.objects.create(
+            name=name,
+            phone=phone,
+            email=email,
+            department=department,
+            image=image
+        )
+
+        return redirect('success')  # or any page
+
+    return render(request, 'add_lecturer.html', {'departments': departments})
+
+def view_lecturers(request):
+    lecturers= Lecture.objects.all()
+    return render(request, 'view_lecturers.html', {'lecturers': lecturers})
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('home')
+
+# Create your views here.
+
+

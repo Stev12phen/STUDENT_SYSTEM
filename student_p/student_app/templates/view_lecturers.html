@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<table border="1" style="border-collapse: collapse; width: 100%;">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Department</th>
+        <th>Image</th>
+    </tr>
+
+    {% for lecturer in lecturers %}
+    <tr style="border: 1px solid;" >
+        <td>{{ lecturer.name }}</td>
+        <td>{{ lecturer.email }}</td>
+        <td>{{ lecturer.phone }}</td>
+        <td>{{ lecturer.department }}</td>
+        <td>
+            <img src="{{ lecturer.image.url }}" width="80">
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
