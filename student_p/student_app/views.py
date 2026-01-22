@@ -5,6 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django. contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.admin.views.decorators import staff_member_required
+
+
 
 
 
@@ -22,25 +25,25 @@ def success(request):
     return render(request, 'success.html')
 
 
-def add_student(request):
-    if request.method == "POST":
-        first_name = request.POST.get('first_name')
-        last_name  = request.POST.get('last_name')
-        email      = request.POST.get('email')
-        age        = request.POST.get('age')
-        image      = request.FILES.get('image')  # for image
+# def add_student(request):
+#     if request.method == "POST":
+#         first_name = request.POST.get('first_name')
+#         last_name  = request.POST.get('last_name')
+#         email      = request.POST.get('email')
+#         age        = request.POST.get('age')
+#         image      = request.FILES.get('image')  # for image
 
-        Student.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            age=age,
-            image=image
-        )
+#         Student.objects.create(
+#             first_name=first_name,
+#             last_name=last_name,
+#             email=email,
+#             age=age,
+#             image=image
+#         )
 
-        return redirect('success')  # or any page you want
+#         return redirect('success')  # or any page you want
 
-    return render(request, 'add_student.html')
+#     return render(request, 'add_student.html')
 
 
 
@@ -71,6 +74,12 @@ def register_user(request):
     return render(request, 'register_user.html')
 
 
+def student_info(request):
+    students= Student.objects.all()
+    return render(request, 'student_info.html', {'students': students})
+
+
+
 
 def login_user(request):
     if request.method == 'POST':
@@ -79,6 +88,7 @@ def login_user(request):
         user = authenticate(request, username= username, password= password)
         if user is not None:
             login(request, user)
+            messages.success(request, "Logged in successfully")
             return redirect('success')
         else:
             return HttpResponse("Invalid credentials")
@@ -106,7 +116,7 @@ def add_lecturer(request):
         if password != password2:
             return redirect('add_lecturer')
         if User.objects.filter(username=username).exists():
-            
+            messages.error(request, "username alreeady exists")
             return redirect('login')
 
         # Create the User first
@@ -124,6 +134,7 @@ def add_lecturer(request):
             user= user
 
         )
+        messages.success(request, f"lecturer {name} added successfully")
 
         return redirect('success')  # or any page
 
@@ -133,7 +144,7 @@ def add_lecturer(request):
 
 
 
-
+@staff_member_required
 def view_lecturers(request):
     lecturers= Lecture.objects.all()
     return render(request, 'view_lecturers.html', {'lecturers': lecturers})
@@ -141,6 +152,7 @@ def view_lecturers(request):
 
 def logout_user(request):
     logout(request)
+    messages.error(request, "Logged out successfully")
     return redirect('home')
 
 
@@ -168,6 +180,7 @@ def register_student(request):
 
         # Check if username exists
         if User.objects.filter(username=username).exists():
+
             
             return redirect('login')
 
@@ -188,6 +201,18 @@ def register_student(request):
         return redirect('success')
 
     return render(request, 'register_student.html')
+
+
+
+def Student_details(request, student_id):
+    student= Student.objects.get(id = student_id)
+    return render(request, 'student_details.html', {'student': student})
+
+def delete_student(request, student_id):
+    student = Student.objects.get(id=student_id)
+    student.delete()
+    messages.success(request, "Student deleted successfully")
+    return redirect('student_info')
 
 
 

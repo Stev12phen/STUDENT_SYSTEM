@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Student Information</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Details of all registered students</p>
+            </div>
+        </div>
+    </header>
+    <br><br><br>
+
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Date of Birth</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <th scope="row">{{ student.id }}</th>
+                    <td>{{ student.first_name }}</td>
+                    <td>{{ student.last_name }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.date_of_birth }}</td>
+                    <td>
+                        {% if student.image %}
+                            <img src="{{ student.image.url }}" alt="Student Image" width="100" height="100">
+                        {% else %}
+                            No Image
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'student_details' student.id %}" class="btn btn-info btn-sm">View Details</a>
+                        <a href="{% url 'delete_student' student.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
