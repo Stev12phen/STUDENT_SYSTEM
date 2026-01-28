@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<h3>{{course.name}}</h3>
+<h4>number of students in {{course.name}} is {{num}}</h4>
+{% for student in course.students.all %}
+    <p>{{student.user}}</p>
+{% empty %}
+    <p>no student registered to this course</p>
+
+{% endfor %}
+
+
+{% endblock %}

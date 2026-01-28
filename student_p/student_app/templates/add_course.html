@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+   <center>
+    Add course
+         <form  method="post" enctype="multipart/form-data" >
+        {% csrf_token %}
+        
+        <label for="name">Name:</label><br><br>
+        <input type="text" id="name" name="name" placeholder="Course"><br><br>
+        <button type="submit" class="btn btn-success"> Add course</button>
+
+    </form>
+   </center>
+{% endblock %}

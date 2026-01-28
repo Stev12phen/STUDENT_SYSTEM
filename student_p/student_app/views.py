@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import Student, Department, Lecture
+from .models import Student, Department, Lecture, Course, Program
 from .forms import StudentForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -11,39 +11,13 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 
 
-
-
-
-
-
-
-
 def home(request):
-    return render(request, 'home.html')
+    programs= Program.objects.all()
+    return render(request, 'home.html', {'programs': programs})
+
 
 def success(request):
     return render(request, 'success.html')
-
-
-# def add_student(request):
-#     if request.method == "POST":
-#         first_name = request.POST.get('first_name')
-#         last_name  = request.POST.get('last_name')
-#         email      = request.POST.get('email')
-#         age        = request.POST.get('age')
-#         image      = request.FILES.get('image')  # for image
-
-#         Student.objects.create(
-#             first_name=first_name,
-#             last_name=last_name,
-#             email=email,
-#             age=age,
-#             image=image
-#         )
-
-#         return redirect('success')  # or any page you want
-
-#     return render(request, 'add_student.html')
 
 
 
@@ -80,18 +54,30 @@ def student_info(request):
 
 
 
-
 def login_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username= username, password= password)
+
+        user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
             messages.success(request, "Logged in successfully")
-            return redirect('success')
+
+            if user.is_staff or user.is_superuser:
+                return redirect('admin_dashboard')
+
+            
+            if Student.objects.filter(user=user).exists():
+                return redirect('student_profile')
+
+            # Safety fallback
+            return redirect('home')
+
         else:
-            return HttpResponse("Invalid credentials")
+            messages.error(request, "Invalid username or password")
+
     return render(request, 'Login.html')
 
 
@@ -167,6 +153,7 @@ def register_student(request):
         email = request.POST.get('email')
         age = request.POST.get('age')
         image = request.FILES.get('image')
+        phone= request.POST.get('phone')
 
         # Get user credentials
         username = request.POST.get('username')
@@ -194,6 +181,7 @@ def register_student(request):
             email=email,
             age=age,
             image=image,
+            phone= phone,
             user=user
         )
 
@@ -215,4 +203,63 @@ def delete_student(request, student_id):
     return redirect('student_info')
 
 
+@login_required
+def student_profile(request):
+    student = Student.objects.get(user=request.user)
+    all_courses = student.courses.all()  # Use instance, not class
+    return render(request, 'profile.html', {
+        'student': student,
+        'all_courses': all_courses
+    })
 
+
+
+def view_student_enrolled(request):
+    course= Course.objects.get(id= 1)
+    course.students.all()
+    num=course.student.count()
+    return render(request, 'course_views.html', {
+        'course': course,
+        'num':num
+    })
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def view_courses(request):
+    courses= Course.objects.all()
+    return render(request, 'view_courses.html',{'courses':courses})
+
+
+def admin_dashboard(request):
+    courses_offered= Course.objects.count()
+    students= Student.objects.count()
+    lecturers= Lecture.objects.count()
+    latest_students= Student.objects.order_by('-id')[:5]
+    return render(request, 'admin.html', {
+    'students': students,
+    'courses_offered': courses_offered,
+
+    'latest_students':latest_students,
+    'lecturers': lecturers
+    
+    })
+
+
+
+def add_course(request):
+    if request.method == 'POST':
+        
+        name = request.POST.get('name')
+        if not name:
+            error = "Course name is required."
+            return render(request, 'courses/add_course.html', {'error': error})
+
+        # Save the course
+        course = Course(name=name)
+        course.save()
+
+        return redirect('admin_dashboard') 
+
+    return render(request, 'add_course.html')

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 800px; line-height: 1.6; font-family: Arial, sans-serif;">
+    
+    <h2 class="text-center mb-4">Student Profile</h2>
+    
+    <hr>
+
+    <!-- Personal Information -->
+    <h4>Personal Information</h4>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 8px; width: 30%;"><strong>Full Name:</strong></td>
+            <td style="padding: 8px;">{{ student.first_name }} {{ student.last_name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><strong>Username:</strong></td>
+            <td style="padding: 8px;">{{ student.user.username }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><strong>Email:</strong></td>
+            <td style="padding: 8px;">{{ student.email }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><strong>Phone:</strong></td>
+            <td style="padding: 8px;">{{ student.phone }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><strong>Age:</strong></td>
+            <td style="padding: 8px;">{{ student.age }}</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <!-- Profile Picture Section -->
+    <h4>Profile Picture</h4>
+    <div style="text-align: center; margin: 20px 0;">
+        <img src="{{ student.image.url }}" alt="Profile Picture" 
+             style="max-width: 200px; max-height: 200px; object-fit: cover; border: 1px solid #000;">
+    </div>
+
+    <hr>
+
+    <!-- Notes / Additional Info -->
+    
+    <h4>{{student.user.username}}'s courses</h4>
+    <ol>
+        {% for course in student.courses.all %}
+            <li>{{course.name}}</li>
+        {% empty %}
+            <li>no courses enrolled</li>
+
+        {% endfor %}
+    </ol>
+
+</div>
+{% endblock %}
