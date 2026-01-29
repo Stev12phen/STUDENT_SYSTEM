@@ -33,16 +33,47 @@
         </tr>
     </table>
 
-    <hr>
+   <hr>
 
-    <!-- Profile Picture Section -->
-    <h4>Profile Picture</h4>
-    <div style="text-align: center; margin: 20px 0;">
-        <img src="{{ student.image.url }}" alt="Profile Picture" 
-             style="max-width: 200px; max-height: 200px; object-fit: cover; border: 1px solid #000;">
+<!-- Profile Picture Section -->
+<h4 class="mb-3">Profile Picture</h4>
+
+<div style="
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+">
+    <div style="
+        background: #f9f9f9;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        text-align: center;
+        width: 280px;
+    ">
+
+        <img src="{{ student.image.url }}" alt="Profile Picture"
+             style="
+                width: 160px;
+                height: 160px;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 4px solid #2c3e50;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+             ">
+
+        <h5 style="margin-top: 15px; color: #2c3e50;">
+            {{ student.first_name }} {{ student.last_name }}
+        </h5>
+
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">
+            {{ student.user.username }}
+        </p>
+
     </div>
+</div>
 
-    <hr>
+<hr>
 
     <!-- Notes / Additional Info -->
     
