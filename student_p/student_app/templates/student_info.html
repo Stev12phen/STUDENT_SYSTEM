@@ -3,6 +3,12 @@
 
 {% block content %}
 
+<style>
+    a{
+        text-decoration: none;
+    }
+</style>
+
     <header class="bg-dark py-5">
         <div class="container px-4 px-lg-5 my-5">
             <div class="text-center text-white">
@@ -27,7 +33,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for student in students %}
+                {% for student in page_obj %}
                 <tr>
                     <th scope="row">{{ student.id }}</th>
                     <td>{{ student.first_name }}</td>
@@ -50,6 +56,24 @@
             </tbody>
         </table>
     </div>
+
+    <br><br>
+
+    
+
+   
+    {% if page_obj.has_previous %}
+        <a href="?page= 1">&laquo first</a> &nbsp; 
+        <a href="?page={{page_obj.previous_page_number}}">previous</a>
+    {% endif %}
+        {{page_obj.number}} of 
+    {% if page_obj.has_next %}
+       
+        <a href="?page= {{page_obj.paginator.num_of_pages}}">{{page_obj.paginator.num_pages}}</a>
+         <a href="?page= {{page_obj.next_page_number}}">next</a>&nbsp;
+    {% endif %} <br>
+
+    
 
     <script>
         

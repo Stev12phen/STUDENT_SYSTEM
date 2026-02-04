@@ -3,7 +3,20 @@
 
     {% block content %}
 
-    <h4>you have successifully added the student</h4>
+    <style>
+      body{
+         text-align: center;
+      }
+      a{
+         text-decoration: none;
+         color: white;
+      }
+    </style>
+
+    <h4>
+      
+      hello {{student.username}}you have successfully registered as a student</h4>
+    <button class="btn btn-success"><a href="{% url 'login' %}">Tap to login</a></button>
     
 
     {% endblock %}

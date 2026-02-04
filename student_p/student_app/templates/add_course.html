@@ -3,14 +3,36 @@
 
 {% block content %}
    <center>
-    Add course
+      <style>
+         input{
+            border-radius: 10px;
+
+         }
+         body{
+            background-color: rgb(65, 65, 107);
+
+         }
+         label{
+            color: white;
+         }
+         .welcome {
+            color: white;
+            font-weight: bold;
+            font-size: 3rem;
+         }
+         
+      </style>
+         <p class="welcome">Add Course</p>
          <form  method="post" enctype="multipart/form-data" >
         {% csrf_token %}
         
         <label for="name">Name:</label><br><br>
         <input type="text" id="name" name="name" placeholder="Course"><br><br>
+        <input type="text" name="amount" id="amount">
+        <input type="text" name="duration" >
+        <input type="text" name="description" id="description">
         <button type="submit" class="btn btn-success"> Add course</button>
 
     </form>
-   </center>
+   </center><br><br><br>
 {% endblock %}

@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django. contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.paginator import Paginator
+
 
 
 
@@ -50,7 +52,15 @@ def register_user(request):
 
 def student_info(request):
     students= Student.objects.all()
-    return render(request, 'student_info.html', {'students': students})
+    paginator= Paginator(students, 2)
+    page_number= request.GET.get('page')
+    page_obj= paginator.get_page(page_number)
+    return render(request, 'student_info.html', {
+        'students': students,
+        'page_obj': page_obj
+        
+        
+        })
 
 
 
@@ -252,12 +262,16 @@ def add_course(request):
     if request.method == 'POST':
         
         name = request.POST.get('name')
+        amount= request.POST.get('amount')
+        duration= request.POST.get('duration')
+        description= request.POST.get('description')
+
         if not name:
             error = "Course name is required."
             return render(request, 'courses/add_course.html', {'error': error})
 
         # Save the course
-        course = Course(name=name)
+        course = Course(name=name, amount= amount, duration= duration, description= description)
         course.save()
 
         return redirect('admin_dashboard') 
