@@ -52,7 +52,7 @@ def register_user(request):
 
 def student_info(request):
     students= Student.objects.all()
-    paginator= Paginator(students, 2)
+    paginator= Paginator(students, 6)
     page_number= request.GET.get('page')
     page_obj= paginator.get_page(page_number)
     return render(request, 'student_info.html', {
@@ -241,7 +241,7 @@ def view_courses(request):
     courses= Course.objects.all()
     return render(request, 'view_courses.html',{'courses':courses})
 
-
+@staff_member_required
 def admin_dashboard(request):
     courses_offered= Course.objects.count()
     students= Student.objects.count()

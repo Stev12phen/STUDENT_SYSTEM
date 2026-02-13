@@ -10,7 +10,9 @@ class Course(models.Model):
         return self.name
 
 class Student(models.Model):
+
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+
     first_name= models.CharField(max_length=30)
     last_name= models.CharField(max_length=30)
     image= models.ImageField(upload_to='images/')
@@ -18,6 +20,7 @@ class Student(models.Model):
     age= models.IntegerField()
     phone= models.CharField(max_length=12)
     courses= models.ManyToManyField(Course, related_name="students")
+    
     
 
     def __str__(self):
@@ -50,6 +53,18 @@ class Lecture(models.Model):
     department= models.ForeignKey(Department, on_delete=models.SET_NULL, null= True)
     def __str__(self):
         return self.name
+
+
+
+class TestChoice(models.Model):
+    status_choice= [
+        ('ACTIVE', 'active'),
+        ('Graduate', 'graduated'),
+        ('drop out', 'dropped out')
+    ]
+    name= models.CharField(max_length=20)
+    choice= models.CharField(max_length=50, choices=status_choice)
+
     
 
 
